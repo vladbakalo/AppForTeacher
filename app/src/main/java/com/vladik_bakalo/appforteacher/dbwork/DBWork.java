@@ -26,14 +26,14 @@ public class DBWork {
         sqLiteOpenHelper = new StudentDBHelper(context);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
     }
-    public void deleteAllStudentData()
-    {
-        sqLiteDatabase.execSQL("delete from "+ sqLiteOpenHelper.TBL_NAME_STUDENT);
-        sqLiteDatabase.execSQL("delete from "+ sqLiteOpenHelper.TBL_NAME_COURSE);
-        sqLiteDatabase.execSQL("delete from "+ sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE);
+
+    public void deleteAllStudentData() {
+        sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_STUDENT);
+        sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_COURSE);
+        sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE);
     }
-    public void writeStudentsToDB(List<Student> students)
-    {
+
+    public void writeStudentsToDB(List<Student> students) {
         for (Student student : students) {
             ContentValues contentValues = new ContentValues();
             contentValues.put(StudentDBHelper._ID, student.getId());
@@ -45,27 +45,22 @@ public class DBWork {
             for (Course course :
                     student.getCourseList()) {
                 //Check for exist Course
-                int  numberOfRows = sqLiteDatabase.update(StudentDBHelper.TBL_NAME_COURSE, null,
-                        StudentDBHelper.CM_COURSE_NAME + " = ? ",
-                        new String[]{course.getCourseName()});
+                long courseId = 0;
+                Cursor cursor = sqLiteDatabase.query(StudentDBHelper.TBL_NAME_COURSE,
+                        new String[]{StudentDBHelper._ID}, StudentDBHelper.CM_COURSE_NAME + " = ? ",
+                        new String[]{course.getCourseName()}, null, null, null);
+                if (cursor.moveToFirst()) {
+                    courseId = cursor.getLong(0);
+                }
+                cursor.close();
                 //CourseId for adding to StudentAndCourse table
-                long courseId;
-                if (numberOfRows <= 0)
-                {
+
+                if (courseId == 0) {
+
                     //If Course isn't exist
                     ContentValues contentValuesForCourse = new ContentValues();
-                    contentValues.put(StudentDBHelper.CM_COURSE_NAME, course.getCourseName());
+                    contentValuesForCourse.put(StudentDBHelper.CM_COURSE_NAME, course.getCourseName());
                     courseId = sqLiteDatabase.insert(StudentDBHelper.TBL_NAME_COURSE, null, contentValuesForCourse);
-                }
-                else
-                {
-                    //If Course is exist
-                    Cursor cursor = sqLiteDatabase.query(StudentDBHelper.TBL_NAME_COURSE,
-                            new String[]{StudentDBHelper._ID}, StudentDBHelper.CM_COURSE_NAME + " = ? ",
-                            new String[]{course.getCourseName()}, null, null, null);
-                    cursor.moveToFirst();
-                    courseId = cursor.getLong(0);
-                    cursor.close();
                 }
                 //Add to CourseandStudent table
                 ContentValues contentValuesForCourseAndStudent = new ContentValues();
@@ -78,5 +73,21 @@ public class DBWork {
 
         }
 
+    }
+
+    public Cursor getCursorOfAllStudents() {
+        Cursor cursor = sqLiteDatabase.query(sqLiteOpenHelper.TBL_NAME_STUDENT,
+                new String[]{
+                        sqLiteOpenHelper._ID,
+                        sqLiteOpenHelper.CM_FIRST_NAME,
+                        sqLiteOpenHelper.CM_LAST_NAME,
+                        sqLiteOpenHelper.CM_BIRTHDAY}, null, null, null, null, null);
+        return cursor;
+    }
+
+    public void closeAllConnection() {
+        if (sqLiteOpenHelper != null) {
+            sqLiteOpenHelper.close();
+        }
     }
 }

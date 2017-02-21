@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_margin="5dp"
+    android:background="?attr/colorButtonNormal">
 
-    <TextView
-        android:id="@+id/id"
+
+
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
+        android:layout_margin="18dp"
+        android:src="@drawable/ic_student"
+        android:id="@+id/student_icon"/>
     <TextView
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-</LinearLayout>
+        android:layout_marginTop="16dp"
+        android:text="Name-"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_toRightOf="@id/student_icon"/>
+    <TextView
+        android:id="@+id/birthday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/content"
+        android:text="11/22/43"
+        android:layout_alignStart="@id/content"></TextView>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/info_icon"
+        android:src="@drawable/ic_info"
+        android:clickable="true"/>
+ />
+</RelativeLayout>

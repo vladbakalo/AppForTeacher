@@ -1,6 +1,7 @@
 package com.vladik_bakalo.appforteacher;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,10 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.vladik_bakalo.appforteacher.dummy.DummyContent;
-import com.vladik_bakalo.appforteacher.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import com.vladik_bakalo.appforteacher.dbwork.DBWork;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent.DummyItem;
+import com.vladik_bakalo.appforteacher.restwork.Student;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +29,7 @@ public class StudentFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private Context appContext;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,7 +71,14 @@ public class StudentFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyStudentRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            StudentContent studentContent = new StudentContent();
+            DBWork dbWork = new DBWork(appContext);
+            //dbWork.writeStudentsToDB(response.body());
+            Cursor cursor = dbWork.getCursorOfAllStudents();
+
+            studentContent.fillArrayByStudents(cursor);
+            dbWork.closeAllConnection();
+            recyclerView.setAdapter(new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener));
         }
         return view;
     }
@@ -80,6 +89,7 @@ public class StudentFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
+            appContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
