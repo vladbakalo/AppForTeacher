@@ -91,7 +91,7 @@ public class DBWork {
                 + sqLiteOpenHelper.TBL_NAME_COURSE
                 + " as CO on SC."
                 + sqLiteOpenHelper.CM_COURSE_ID + " = CO." + sqLiteOpenHelper._ID;
-        Cursor cursor = sqLiteDatabase.query(sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE,
+        Cursor cursor = sqLiteDatabase.query(table,
                 new String[]{"CO." + sqLiteOpenHelper.CM_COURSE_NAME + " as CourseName",
                 "SC."+sqLiteOpenHelper.CM_MARK + "as Mark"},
                 "SC." + sqLiteOpenHelper.CM_STUDENT_ID + " = ?",
