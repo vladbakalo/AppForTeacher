@@ -16,6 +16,8 @@ import com.vladik_bakalo.appforteacher.dummy.StudentContent;
 import com.vladik_bakalo.appforteacher.dummy.StudentContent.DummyItem;
 import com.vladik_bakalo.appforteacher.restwork.Student;
 
+import java.text.ParseException;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -76,7 +78,11 @@ public class StudentFragment extends Fragment {
             //dbWork.writeStudentsToDB(response.body());
             Cursor cursor = dbWork.getCursorOfAllStudents();
 
-            studentContent.fillArrayByStudents(cursor);
+            try {
+                studentContent.fillArrayByStudents(cursor);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             dbWork.closeAllConnection();
             recyclerView.setAdapter(new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener));
         }

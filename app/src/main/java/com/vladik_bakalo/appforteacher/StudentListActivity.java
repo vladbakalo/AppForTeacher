@@ -36,6 +36,7 @@ public class StudentListActivity extends AppCompatActivity implements StudentFra
         List<Course> list = Course.getListCourses(courses);
         AlertDialog dialog = DialogScreen.getDialogCourses(this, list);
         dialog.show();
+        dbWork.closeAllConnection();
     }
 
     @OnClick(R.id.filter_icon)

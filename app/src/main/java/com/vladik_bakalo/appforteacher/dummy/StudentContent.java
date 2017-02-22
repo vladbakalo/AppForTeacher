@@ -3,6 +3,7 @@ package com.vladik_bakalo.appforteacher.dummy;
 import android.database.Cursor;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,13 +29,15 @@ public class StudentContent {
         ITEMS.add(item);
     }
 
-    public void fillArrayByStudents(Cursor cursorOfStudents) {
+    public void fillArrayByStudents(Cursor cursorOfStudents) throws ParseException {
         Cursor cursor = cursorOfStudents;
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatFrom = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (cursor.moveToFirst()) {
             DummyItem studentItem;
             do {
-                Date date = new Date(cursor.getInt(3));
+                Date date = dateFormatFrom.parse(cursor.getString(3));
+
                 studentItem = new DummyItem(cursor.getString(0), cursor.getString(1),
                         cursor.getString(2), dateFormat.format(date));
                 addItem(studentItem);

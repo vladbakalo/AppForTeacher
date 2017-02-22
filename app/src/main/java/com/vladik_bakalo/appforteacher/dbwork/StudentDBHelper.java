@@ -40,7 +40,7 @@ public class StudentDBHelper extends SQLiteOpenHelper implements BaseColumns {
                 + _ID + " TEXT PRIMARY KEY, "
                 + CM_FIRST_NAME + " TEXT, "
                 + CM_LAST_NAME + " TEXT, "
-                + CM_BIRTHDAY  + " INTEGER);");
+                + CM_BIRTHDAY  + " TEXT);");
         sqLiteDatabase.execSQL("CREATE TABLE " + TBL_NAME_COURSE + "("
                 + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CM_COURSE_NAME + " TEXT);");
@@ -48,7 +48,7 @@ public class StudentDBHelper extends SQLiteOpenHelper implements BaseColumns {
                 + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CM_COURSE_ID + " INTEGER, "
                 + CM_STUDENT_ID + " TEXT, "
-                + CM_MARK + " REAL);");
+                + CM_MARK + " INTEGER);");
     }
 
     @Override
