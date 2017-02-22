@@ -84,7 +84,20 @@ public class DBWork {
                         sqLiteOpenHelper.CM_BIRTHDAY}, null, null, null, null, null);
         return cursor;
     }
-
+    public Cursor getCoursesByStudentId(String studentId)
+    {
+        String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE
+                + " as SC inner join "
+                + sqLiteOpenHelper.TBL_NAME_COURSE
+                + " as CO on SC."
+                + sqLiteOpenHelper.CM_COURSE_ID + " = CO." + sqLiteOpenHelper._ID;
+        Cursor cursor = sqLiteDatabase.query(sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE,
+                new String[]{"CO." + sqLiteOpenHelper.CM_COURSE_NAME + " as CourseName",
+                "SC."+sqLiteOpenHelper.CM_MARK + "as Mark"},
+                "SC." + sqLiteOpenHelper.CM_STUDENT_ID + " = ?",
+                new String[]{studentId}, null, null, null);
+        return cursor;
+    }
     public void closeAllConnection() {
         if (sqLiteOpenHelper != null) {
             sqLiteOpenHelper.close();

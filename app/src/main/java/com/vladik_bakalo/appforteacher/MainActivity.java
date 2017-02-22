@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.vladik_bakalo.appforteacher.dbwork.DBWork;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent;
 import com.vladik_bakalo.appforteacher.restwork.Student;
 import com.vladik_bakalo.appforteacher.restwork.StudentService;
 
@@ -55,35 +56,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Intent intent = new Intent(this, StudentListActivity.class);
+        startActivity(intent);
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Call<List<Student>> call = apiService.getStudents();
-                call.enqueue(new Callback<List<Student>>() {
-                    @Override
-                    public void onResponse(Call<List<Student>> call, Response<List<Student>> response) {
-                        Toast.makeText(MainActivity.this, "Yess", Toast.LENGTH_SHORT).show();
-                        DBWork dbWork = new DBWork(getApplicationContext());
-                        //dbWork.writeStudentsToDB(response.body());
-                        Cursor cursor = dbWork.getCursorOfAllStudents();
-                        cursor.close();
-                        dbWork.closeAllConnection();
-                        //Toast.makeText(MainActivity.this, response.body().size(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Student>> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Noo...", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                Call<List<Student>> call = apiService.getStudents();
+//                call.enqueue(new Callback<List<Student>>() {
+//                    @Override
+//                    public void onResponse(Call<List<Student>> call, Response<List<Student>> response) {
+//                        Toast.makeText(MainActivity.this, "Yess", Toast.LENGTH_SHORT).show();
+//                        DBWork dbWork = new DBWork(getApplicationContext());
+//                        //dbWork.writeStudentsToDB(response.body());
+//                        Cursor cursor = dbWork.getCursorOfAllStudents();
+//                        cursor.close();
+//                        dbWork.closeAllConnection();
+//                        //Toast.makeText(MainActivity.this, response.body().size(), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<List<Student>> call, Throwable t) {
+//                        Toast.makeText(MainActivity.this, "Noo...", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
     }
 
     @OnClick(R.id.startButton)
@@ -91,4 +94,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, StudentListActivity.class);
         startActivity(intent);
     }
+
+
 }
