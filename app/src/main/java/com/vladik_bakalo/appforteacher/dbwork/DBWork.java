@@ -84,7 +84,7 @@ public class DBWork {
                         sqLiteOpenHelper.CM_BIRTHDAY}, null, null, null, null, null);
         return cursor;
     }
-    public Cursor getCoursesByStudentId(String studentId)
+    public Cursor getCursorOfCoursesByStudentId(String studentId)
     {
         String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE
                 + " as SC inner join "

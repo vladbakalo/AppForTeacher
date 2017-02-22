@@ -1,11 +1,17 @@
 package com.vladik_bakalo.appforteacher;
 
+import android.app.AlertDialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.vladik_bakalo.appforteacher.dbwork.DBWork;
 import com.vladik_bakalo.appforteacher.dummy.StudentContent;
+import com.vladik_bakalo.appforteacher.restwork.Course;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +31,11 @@ public class StudentListActivity extends AppCompatActivity implements StudentFra
 
     @Override
     public void onListFragmentInteraction(StudentContent.DummyItem item) {
-        Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show();
+        DBWork dbWork = new DBWork(getApplicationContext());
+        Cursor courses = dbWork.getCursorOfCoursesByStudentId(item.id);
+        List<Course> list = Course.getListCourses(courses);
+        AlertDialog dialog = DialogScreen.getDialogCourses(this, list);
+        dialog.show();
     }
 
     @OnClick(R.id.filter_icon)

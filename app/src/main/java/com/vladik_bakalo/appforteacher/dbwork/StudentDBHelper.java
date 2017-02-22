@@ -13,10 +13,12 @@ public class StudentDBHelper extends SQLiteOpenHelper implements BaseColumns {
     public static final String DB_NAME = "students_db";
     public static final int DB_VERSION = 1;
     //Tables
+
     public static final String TBL_NAME_STUDENT = "tbl_Student";
     public static final String TBL_NAME_COURSE = "tbl_Course";
     public static final String TBL_NAME_STUDENTandCOURSE = "tbl_StudentandCourse";
     //Columns
+
     //STUDENT table
     public static final String CM_FIRST_NAME = "FIRST_NAME";
     public static final String CM_BIRTHDAY = "BIRTHDAY";
