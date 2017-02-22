@@ -25,7 +25,7 @@ import retrofit2.Response;
 import static com.vladik_bakalo.appforteacher.restwork.StudentService.retrofit;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static final String IS_STARTED_BEFOER = "isStartedBefore";
     StudentService apiService =
             retrofit.create(StudentService.class);
     ProgressDialog progressDialog;
@@ -42,14 +42,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        //Set progress dialog window
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Downloadin data... ");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        getDataFromApiAndWriteToDB();
+        if (!savedInstanceState.getBoolean(IS_STARTED_BEFOER)) {
+            //Set progress dialog window
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Downloadin data... ");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            getDataFromApiAndWriteToDB();
+        }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_STARTED_BEFOER, true);
     }
 
     private void getDataFromApiAndWriteToDB() {

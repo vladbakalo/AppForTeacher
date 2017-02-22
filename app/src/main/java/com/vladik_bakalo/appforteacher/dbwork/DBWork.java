@@ -113,7 +113,11 @@ public class DBWork {
                         "ST." + sqLiteOpenHelper._ID + " as st_id",
                         "ST." + sqLiteOpenHelper.CM_FIRST_NAME + " as st_name",
                         "ST." + sqLiteOpenHelper.CM_LAST_NAME + " as st_last",
-                        "ST." + sqLiteOpenHelper.CM_BIRTHDAY + " as st_birth"}, null, null, null, null, null);
+                        "ST." + sqLiteOpenHelper.CM_BIRTHDAY + " as st_birth",
+                        "CO." + sqLiteOpenHelper.CM_COURSE_NAME + " as co_course_name",
+                        "SC." + sqLiteOpenHelper.CM_MARK + " as sc_mark"},
+                "co_course_name = ? and sc_mark = ?",
+                new String[]{courseName, mark.toString()}, null, null, null);
         return cursor;
     }
     public Cursor getCursorOfCoursesByStudentId(String studentId)
