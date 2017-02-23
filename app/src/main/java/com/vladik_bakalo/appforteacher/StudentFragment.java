@@ -1,19 +1,24 @@
 package com.vladik_bakalo.appforteacher;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.vladik_bakalo.appforteacher.dummy.DummyContent;
-import com.vladik_bakalo.appforteacher.dummy.DummyContent.DummyItem;
+import com.vladik_bakalo.appforteacher.dbwork.DBWork;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent.DummyItem;
+import com.vladik_bakalo.appforteacher.restwork.Student;
 
-import java.util.List;
+import java.text.ParseException;
 
 /**
  * A fragment representing a list of Items.
@@ -23,11 +28,15 @@ import java.util.List;
  */
 public class StudentFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
+    private Context appContext;
+    private LinearLayoutManager linearLayoutManager;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private MyStudentRecyclerViewAdapter myStudentRecyclerViewAdapter;
+    private RecyclerView recyclerView;
+    private StudentContent studentContent;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,19 +49,20 @@ public class StudentFragment extends Fragment {
     @SuppressWarnings("unused")
     public static StudentFragment newInstance(int columnCount) {
         StudentFragment fragment = new StudentFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
         return fragment;
     }
+    public void changeData(Cursor cursor)
+    {
+        studentContent.closeCursor();
+        studentContent = new StudentContent(cursor);
+        myStudentRecyclerViewAdapter = new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener);
+        recyclerView.swapAdapter(myStudentRecyclerViewAdapter, false);
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -63,13 +73,33 @@ public class StudentFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyStudentRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView = (RecyclerView) view;
+            linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            //
+            //DBWork
+            DBWork dbWork = new DBWork(appContext);
+            Cursor cursor = dbWork.getCursorOfAllStudents();
+            studentContent = new StudentContent(cursor);
+            dbWork.closeAllConnection();
+
+            //Scroll Work
+            scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore() {
+                    Log.i("----Scroll----", "onLoadMore");
+                    try {
+                        studentContent.updateArrayByStudents();
+                        myStudentRecyclerViewAdapter.notifyDataSetChanged();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            };
+            recyclerView.addOnScrollListener(scrollListener);
+            myStudentRecyclerViewAdapter = new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener);
+            recyclerView.setAdapter(myStudentRecyclerViewAdapter);
         }
         return view;
     }
@@ -80,6 +110,7 @@ public class StudentFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
+            appContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -103,7 +134,6 @@ public class StudentFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     }
 }

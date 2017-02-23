@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
- * Created by Владислав on 20.02.2017.
+ * Retrofit service
  */
 
 public interface StudentService {

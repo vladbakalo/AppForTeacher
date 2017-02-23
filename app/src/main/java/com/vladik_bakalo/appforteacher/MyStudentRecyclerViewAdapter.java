@@ -4,17 +4,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vladik_bakalo.appforteacher.StudentFragment.OnListFragmentInteractionListener;
-import com.vladik_bakalo.appforteacher.dummy.DummyContent.DummyItem;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent.DummyItem;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder> {
 
@@ -36,10 +36,10 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mBirthDayView.setText(mValues.get(position).birthDay);
+        holder.mContentView.setText(mValues.get(position).toString());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mInfoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -49,6 +49,7 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
                 }
             }
         });
+
     }
 
     @Override
@@ -58,15 +59,17 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        public final TextView mBirthDayView;
         public final TextView mContentView;
+        public final ImageView mInfoImageView;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            mBirthDayView = (TextView) view.findViewById(R.id.birthday);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mInfoImageView = (ImageView) view.findViewById(R.id.info_icon);
         }
 
         @Override

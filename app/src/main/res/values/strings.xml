@@ -3,4 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="filters_str">Filters</string>
+    <string name="courses_str">Courses</string>
+    <string name="clear_str">Clear</string>
 </resources>
