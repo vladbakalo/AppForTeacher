@@ -39,17 +39,19 @@ public class DBWork {
          * time for existing courses, while i am adding
          * students
          */
+        List<ContentValues> valuesForStudents = new ArrayList<>();
+        List<ContentValues> valuesForStudentAndCourse = new ArrayList<>();
         List<BufferCourse> existCourses = new ArrayList<>();
         for (Student student : students) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date(Long.parseLong(student.getBirthDay()));
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(StudentDBHelper._ID, student.getId());
-            contentValues.put(StudentDBHelper.CM_BIRTHDAY, dateFormat.format(date));
-            contentValues.put(StudentDBHelper.CM_FIRST_NAME, student.getFirstName());
-            contentValues.put(StudentDBHelper.CM_LAST_NAME, student.getLastName());
+            ContentValues contentValuesForStudent = new ContentValues();
+            contentValuesForStudent.put(StudentDBHelper._ID, student.getId());
+            contentValuesForStudent.put(StudentDBHelper.CM_BIRTHDAY, dateFormat.format(date));
+            contentValuesForStudent.put(StudentDBHelper.CM_FIRST_NAME, student.getFirstName());
+            contentValuesForStudent.put(StudentDBHelper.CM_LAST_NAME, student.getLastName());
 
-            sqLiteDatabase.insert(StudentDBHelper.TBL_NAME_STUDENT, null, contentValues);
+            valuesForStudents.add(contentValuesForStudent);
             for (Course course :
                     student.getCourseList()) {
                 //Check for exist Course
@@ -77,12 +79,24 @@ public class DBWork {
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_COURSE_ID, courseId);
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_STUDENT_ID, student.getId());
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_MARK, course.getMark());
-                sqLiteDatabase.insert(sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE,
-                        null, contentValuesForCourseAndStudent);
+                valuesForStudentAndCourse.add(contentValuesForCourseAndStudent);
             }
 
         }
+        packageInserting(valuesForStudents, valuesForStudentAndCourse);
 
+    }
+    private void packageInserting(List<ContentValues> students, List<ContentValues> studentAndCourse)
+    {
+        sqLiteDatabase.beginTransaction();
+        for (ContentValues item : students) {
+            sqLiteDatabase.insert(sqLiteOpenHelper.TBL_NAME_STUDENT, null, item);
+        }
+        for (ContentValues item : studentAndCourse) {
+            sqLiteDatabase.insert(sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE, null, item);
+        }
+        sqLiteDatabase.setTransactionSuccessful();
+        sqLiteDatabase.endTransaction();
     }
     public Cursor getCursorOfAllStudents() {
         Cursor cursor = sqLiteDatabase.query(sqLiteOpenHelper.TBL_NAME_STUDENT,

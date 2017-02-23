@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Set progress dialog window
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setMessage("Downloadin data... ");
-//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setCancelable(false);
-//        getDataFromApiAndWriteToDB();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Downloadin data... ");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        getDataFromApiAndWriteToDB();
 
 
     }
