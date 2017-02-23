@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.vladik_bakalo.appforteacher.dbwork.StudentDBHelper;
+import com.vladik_bakalo.appforteacher.dummy.StudentContent;
 import com.vladik_bakalo.appforteacher.restwork.Course;
 
 import java.util.List;
@@ -22,7 +23,20 @@ import java.util.List;
 
 public class DialogScreen {
 
-    public static AlertDialog getDialogFilter(Activity activity, Cursor courses) {
+    OnAlertDialogFilterInteractionListener dListner;
+    public interface OnAlertDialogFilterInteractionListener
+    {
+        void onAlertDialogFilterClear();
+        void onAlertDialogDoFilter();
+    }
+    public AlertDialog getDialogFilter(Activity activity, Cursor courses) {
+        if (activity instanceof StudentFragment.OnListFragmentInteractionListener) {
+            dListner = (OnAlertDialogFilterInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnAlertDialogFilterInteractionListener");
+        }
+        //
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         View viewFilter = activity.getLayoutInflater().inflate(R.layout.filters, null); // Получаем layout по его ID
@@ -33,11 +47,13 @@ public class DialogScreen {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
             public void onClick(DialogInterface dialog, int whichButton) {
                 //MainActivity.doSaveSettings(); // Переход в сохранение настроек MainActivity
+                dListner.onAlertDialogDoFilter();
                 dialog.dismiss();
             }
         });
         builder.setNegativeButton(R.string.clear_str, new DialogInterface.OnClickListener() { // Кнопка Отмена
             public void onClick(DialogInterface dialog, int which) {
+                dListner.onAlertDialogFilterClear();
                 dialog.dismiss();
             }
         });
@@ -57,7 +73,7 @@ public class DialogScreen {
         simpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCourses.setAdapter(simpleCursorAdapter);
     }
-    public static AlertDialog getDialogCourses(Activity activity, List<Course> courses) {
+    public AlertDialog getDialogCourses(Activity activity, List<Course> courses) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         View viewCourses = activity.getLayoutInflater().inflate(R.layout.courses, null); // Получаем layout по его ID
         //Fill listview of Courses

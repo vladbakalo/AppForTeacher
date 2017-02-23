@@ -97,16 +97,13 @@ public class DBWork {
                         sqLiteOpenHelper.CM_BIRTHDAY}, null, null, null, null, null);
         return cursor;
     }
-    public  Cursor getStudentsByFilter(Integer mark, String courseName)
+    public  Cursor getStudentsByFilter(Integer mark, Integer courseId)
     {
         String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE
                 + " as SC inner join "
-                + sqLiteOpenHelper.TBL_NAME_COURSE
-                + " as CO on SC."
-                + sqLiteOpenHelper.CM_COURSE_ID + " = CO." + sqLiteOpenHelper._ID
-                + " inner join " + sqLiteOpenHelper.TBL_NAME_STUDENT
+                + sqLiteOpenHelper.TBL_NAME_STUDENT
                 + " as ST on SC." + sqLiteOpenHelper.CM_STUDENT_ID + " = ST."
-                + sqLiteOpenHelper.CM_STUDENT_ID;
+                + sqLiteOpenHelper._ID;
 
         Cursor cursor = sqLiteDatabase.query(table,
                 new String[]{
@@ -114,10 +111,10 @@ public class DBWork {
                         "ST." + sqLiteOpenHelper.CM_FIRST_NAME + " as st_name",
                         "ST." + sqLiteOpenHelper.CM_LAST_NAME + " as st_last",
                         "ST." + sqLiteOpenHelper.CM_BIRTHDAY + " as st_birth",
-                        "CO." + sqLiteOpenHelper.CM_COURSE_NAME + " as co_course_name",
-                        "SC." + sqLiteOpenHelper.CM_MARK + " as sc_mark"},
-                "co_course_name = ? and sc_mark = ?",
-                new String[]{courseName, mark.toString()}, null, null, null);
+                        "SC." + sqLiteOpenHelper.CM_MARK + " as sc_mark",
+                        "SC." + sqLiteOpenHelper.CM_COURSE_ID + " as sc_course_id"},
+                "sc_course_id = ? and sc_mark = ?",
+                new String[]{courseId.toString(), mark.toString()}, null, null, null);
         return cursor;
     }
     public Cursor getCursorOfCoursesName()

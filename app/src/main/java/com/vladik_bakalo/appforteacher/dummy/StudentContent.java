@@ -35,7 +35,10 @@ public class StudentContent {
             e.printStackTrace();
         }
     }
-
+    public void closeCursor()
+    {
+        itemCursor.close();
+    }
     private void addItem(DummyItem item) {
         ITEMS.add(item);
     }

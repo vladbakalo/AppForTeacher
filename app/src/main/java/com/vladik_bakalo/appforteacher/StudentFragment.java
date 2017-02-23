@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.vladik_bakalo.appforteacher.dbwork.DBWork;
 import com.vladik_bakalo.appforteacher.dummy.StudentContent;
@@ -33,6 +34,8 @@ public class StudentFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private EndlessRecyclerViewScrollListener scrollListener;
     private MyStudentRecyclerViewAdapter myStudentRecyclerViewAdapter;
+    private RecyclerView recyclerView;
+    private StudentContent studentContent;
 
 
     /**
@@ -48,7 +51,14 @@ public class StudentFragment extends Fragment {
         StudentFragment fragment = new StudentFragment();
         return fragment;
     }
+    public void changeData(Cursor cursor)
+    {
+        studentContent.closeCursor();
+        studentContent = new StudentContent(cursor);
+        myStudentRecyclerViewAdapter = new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener);
+        recyclerView.swapAdapter(myStudentRecyclerViewAdapter, false);
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,14 +73,14 @@ public class StudentFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            final RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
             //
             //DBWork
             DBWork dbWork = new DBWork(appContext);
             Cursor cursor = dbWork.getCursorOfAllStudents();
-            final StudentContent studentContent = new StudentContent(cursor);
+            studentContent = new StudentContent(cursor);
             dbWork.closeAllConnection();
 
             //Scroll Work
