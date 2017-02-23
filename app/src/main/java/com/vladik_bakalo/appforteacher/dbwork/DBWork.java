@@ -50,7 +50,7 @@ public class DBWork {
             contentValuesForStudent.put(StudentDBHelper.CM_BIRTHDAY, dateFormat.format(date));
             contentValuesForStudent.put(StudentDBHelper.CM_FIRST_NAME, student.getFirstName());
             contentValuesForStudent.put(StudentDBHelper.CM_LAST_NAME, student.getLastName());
-
+            //add to list for package inserting
             valuesForStudents.add(contentValuesForStudent);
             for (Course course :
                     student.getCourseList()) {
@@ -83,10 +83,13 @@ public class DBWork {
             }
 
         }
+        //add to list for package inserting
         packageInserting(valuesForStudents, valuesForStudentAndCourse);
 
     }
+
     private void packageInserting(List<ContentValues> students, List<ContentValues> studentAndCourse)
+    //That method optimized inserting by transaction
     {
         sqLiteDatabase.beginTransaction();
         for (ContentValues item : students) {
