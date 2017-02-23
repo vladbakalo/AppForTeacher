@@ -2,11 +2,16 @@ package com.vladik_bakalo.appforteacher;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.vladik_bakalo.appforteacher.dbwork.StudentDBHelper;
 import com.vladik_bakalo.appforteacher.restwork.Course;
 
 import java.util.List;
@@ -17,53 +22,42 @@ import java.util.List;
 
 public class DialogScreen {
 
-    public static final int IDD_FILTER = 1;
-    public static final int IDD_COURSES = 2;
-
-    public static AlertDialog getDialog(Activity activity, int ID) {
+    public static AlertDialog getDialogFilter(Activity activity, Cursor courses) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        switch(ID) {
-            case IDD_FILTER:
-                View viewCourse = activity.getLayoutInflater().inflate(R.layout.filters, null); // Получаем layout по его ID
-                builder.setView(viewCourse);
-                builder.setTitle(R.string.filters_str);
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //MainActivity.doSaveSettings(); // Переход в сохранение настроек MainActivity
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // Кнопка Отмена
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.setCancelable(true);
-                return builder.create();
-            case IDD_COURSES: // Диалог настроек
-                View viewSetting = activity.getLayoutInflater().inflate(R.layout.courses, null); // Получаем layout по его ID
-                builder.setView(viewSetting);
-                builder.setTitle(R.string.courses_str);
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //MainActivity.doSaveSettings(); // Переход в сохранение настроек MainActivity
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // Кнопка Отмена
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.setCancelable(true);
-                return builder.create();
-            default:
-                return null;
-        }
+        View viewFilter = activity.getLayoutInflater().inflate(R.layout.filters, null); // Получаем layout по его ID
+        Spinner spinner = (Spinner) viewFilter.findViewById(R.id.spinnerCourses);
+        fillSpinerByCourses(spinner, courses, activity);
+        builder.setView(viewFilter);
+        builder.setTitle(R.string.filters_str);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //MainActivity.doSaveSettings(); // Переход в сохранение настроек MainActivity
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.clear_str, new DialogInterface.OnClickListener() { // Кнопка Отмена
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(true);
+        AlertDialog window = builder.create();
+        window.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        return window;
+
+
     }
-    public static AlertDialog getDialogCourses(Activity activity, List<Course> courses)
+    public static void fillSpinerByCourses(Spinner spinnerCourses, Cursor courses, Context context)
     {
+        String[] colums = new String[]{StudentDBHelper.CM_COURSE_NAME};
+        int[] toViews = new int[]{android.R.id.text1};
+        SimpleCursorAdapter simpleCursorAdapter =
+                new SimpleCursorAdapter(context, android.R.layout.simple_spinner_item, courses, colums, toViews, 0);
+        simpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCourses.setAdapter(simpleCursorAdapter);
+    }
+    public static AlertDialog getDialogCourses(Activity activity, List<Course> courses) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         View viewCourses = activity.getLayoutInflater().inflate(R.layout.courses, null); // Получаем layout по его ID
         //Fill listview of Courses

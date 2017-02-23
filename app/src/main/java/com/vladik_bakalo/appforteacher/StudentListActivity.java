@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -17,16 +18,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class StudentListActivity extends AppCompatActivity implements StudentFragment.OnListFragmentInteractionListener {
+public class StudentListActivity extends AppCompatActivity implements StudentFragment.OnListFragmentInteractionListener, View.OnClickListener {
 
-    @BindView(R.id.filter_icon)
+
     ImageView filterIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
-        ButterKnife.bind(this);
+        //
+        filterIcon = (ImageView)findViewById(R.id.filter_icon);
+        filterIcon.setOnClickListener(this);
     }
 
     @Override
@@ -39,8 +42,12 @@ public class StudentListActivity extends AppCompatActivity implements StudentFra
         dbWork.closeAllConnection();
     }
 
-    @OnClick(R.id.filter_icon)
-    public void onClick() {
-
+    @Override
+    public void onClick(View view) {
+        DBWork dbWork = new DBWork(getApplicationContext());
+        Cursor coursesName = dbWork.getCursorOfCoursesName();
+        AlertDialog dialog = DialogScreen.getDialogFilter(this, coursesName);
+        dialog.show();
+        dbWork.closeAllConnection();
     }
 }

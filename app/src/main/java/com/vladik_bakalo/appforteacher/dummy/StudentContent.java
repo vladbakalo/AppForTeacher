@@ -23,26 +23,43 @@ public class StudentContent {
      * An array of sample (Student) items.
      */
     public final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static final int COUNT_TO_UPLOAD = 20;
+    private Cursor itemCursor;
 
+    public StudentContent(Cursor cursor) {
+        itemCursor = cursor;
+        itemCursor.moveToFirst();
+        try {
+            updateArrayByStudents();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void addItem(DummyItem item) {
         ITEMS.add(item);
     }
 
-    public void fillArrayByStudents(Cursor cursorOfStudents) throws ParseException {
-        Cursor cursor = cursorOfStudents;
+    public void updateArrayByStudents() throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DateFormat dateFormatFrom = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (cursor.moveToFirst()) {
-            DummyItem studentItem;
-            do {
-                Date date = dateFormatFrom.parse(cursor.getString(3));
+        DummyItem studentItem;
 
-                studentItem = new DummyItem(cursor.getString(0), cursor.getString(1),
-                        cursor.getString(2), dateFormat.format(date));
-                addItem(studentItem);
-            } while (cursor.moveToNext());
+        for (int i = 0; i < COUNT_TO_UPLOAD; i++) {
+            if (itemCursor.isLast())
+            {
+                return;
+            }
+            Date date = dateFormatFrom.parse(itemCursor.getString(3));
+
+            studentItem = new DummyItem(itemCursor.getString(0), itemCursor.getString(1),
+                    itemCursor.getString(2), dateFormat.format(date));
+            addItem(studentItem);
+            //
+            itemCursor.moveToNext();
         }
+
+
     }
 
     /**

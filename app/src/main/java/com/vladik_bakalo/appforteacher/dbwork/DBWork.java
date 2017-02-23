@@ -120,6 +120,13 @@ public class DBWork {
                 new String[]{courseName, mark.toString()}, null, null, null);
         return cursor;
     }
+    public Cursor getCursorOfCoursesName()
+    {
+        Cursor cursor = sqLiteDatabase.query(sqLiteOpenHelper.TBL_NAME_COURSE,
+                new String[]{sqLiteOpenHelper._ID, sqLiteOpenHelper.CM_COURSE_NAME},
+                null, null, null, null, null);
+        return cursor;
+    }
     public Cursor getCursorOfCoursesByStudentId(String studentId)
     {
         String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE

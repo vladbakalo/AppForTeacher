@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,13 @@ import java.text.ParseException;
  */
 public class StudentFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
     private Context appContext;
+    private LinearLayoutManager linearLayoutManager;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private MyStudentRecyclerViewAdapter myStudentRecyclerViewAdapter;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,9 +46,6 @@ public class StudentFragment extends Fragment {
     @SuppressWarnings("unused")
     public static StudentFragment newInstance(int columnCount) {
         StudentFragment fragment = new StudentFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -54,9 +53,6 @@ public class StudentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -67,24 +63,33 @@ public class StudentFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            StudentContent studentContent = new StudentContent();
+            final RecyclerView recyclerView = (RecyclerView) view;
+            linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            //
+            //DBWork
             DBWork dbWork = new DBWork(appContext);
-            //dbWork.writeStudentsToDB(response.body());
             Cursor cursor = dbWork.getCursorOfAllStudents();
-
-            try {
-                studentContent.fillArrayByStudents(cursor);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            final StudentContent studentContent = new StudentContent(cursor);
             dbWork.closeAllConnection();
-            recyclerView.setAdapter(new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener));
+
+            //Scroll Work
+            scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    Log.i("----Scroll----", "onLoadMore");
+                    try {
+                        studentContent.updateArrayByStudents();
+                        myStudentRecyclerViewAdapter.notifyDataSetChanged();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            };
+            recyclerView.addOnScrollListener(scrollListener);
+            myStudentRecyclerViewAdapter = new MyStudentRecyclerViewAdapter(studentContent.ITEMS, mListener);
+            recyclerView.setAdapter(myStudentRecyclerViewAdapter);
         }
         return view;
     }

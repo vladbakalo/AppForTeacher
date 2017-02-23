@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button startButton = (Button)findViewById(R.id.startButton);
+        Button startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,15 +42,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        if (!savedInstanceState.getBoolean(IS_STARTED_BEFOER)) {
-            //Set progress dialog window
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("Downloadin data... ");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(false);
-            getDataFromApiAndWriteToDB();
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(IS_STARTED_BEFOER)) {
+                return;
+            }
         }
+
+        //Set progress dialog window
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setMessage("Downloadin data... ");
+//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.setCancelable(false);
+//        getDataFromApiAndWriteToDB();
+
 
     }
 
