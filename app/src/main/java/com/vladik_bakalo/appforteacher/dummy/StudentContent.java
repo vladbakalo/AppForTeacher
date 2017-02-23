@@ -15,12 +15,11 @@ import java.util.Map;
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  * <p>
- * TODO: Replace all uses of this class before publishing your app.
  */
 public class StudentContent {
 
     /**
-     * An array of sample (Student) items.
+     * An array of Student items.
      */
     public final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
     public static final int COUNT_TO_UPLOAD = 20;

@@ -13,7 +13,7 @@ import com.vladik_bakalo.appforteacher.restwork.Course;
 import java.util.List;
 
 /**
- * Created by Владислав on 22.02.2017.
+ * Class is used in listview(DialogCourseView)
  */
 
 public class CoursesArrayAdapter extends ArrayAdapter<Course> {

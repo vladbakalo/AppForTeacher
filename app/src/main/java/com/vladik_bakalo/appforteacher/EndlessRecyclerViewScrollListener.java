@@ -13,8 +13,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int visibleThreshold = 5;
-    // The current offset index of data you have loaded
-    private int currentPage = 0;
     // The total number of items in the dataset after the last load
     private int previousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
@@ -40,21 +38,16 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         return maxSize;
     }
 
-    // This happens many times a second during a scroll, so be wary of the code you place here.
-    // We are given a few useful parameters to help us work out if we need to load some more data,
-    // but first we check if we are waiting for the previous load to finish.
     @Override
     public void onScrolled(RecyclerView view, int dx, int dy) {
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
 
         lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
-        //int currentPos = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
         if (totalItemCount < previousTotalItemCount) {
-            this.currentPage = this.startingPageIndex;
             this.previousTotalItemCount = totalItemCount;
             if (totalItemCount == 0) {
                 this.loading = true;
@@ -73,19 +66,16 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         // threshold should reflect how many total columns there are too
         if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-            currentPage++;
-            onLoadMore(currentPage, totalItemCount, view);
+            onLoadMore();
             loading = true;
         }
     }
 
-    // Call this method whenever performing new searches
     public void resetState() {
-        this.currentPage = this.startingPageIndex;
         this.previousTotalItemCount = 0;
         this.loading = true;
     }
 
-    // Defines the process for actually loading more data based on page
-    public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
+    // Defines the process for actually loading more data based
+    public abstract void onLoadMore();
 }

@@ -86,7 +86,7 @@ public class StudentFragment extends Fragment {
             //Scroll Work
             scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
                 @Override
-                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                public void onLoadMore() {
                     Log.i("----Scroll----", "onLoadMore");
                     try {
                         studentContent.updateArrayByStudents();
@@ -134,7 +134,6 @@ public class StudentFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     }
 }

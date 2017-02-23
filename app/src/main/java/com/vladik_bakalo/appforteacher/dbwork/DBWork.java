@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.vladik_bakalo.appforteacher.restwork.Course;
 import com.vladik_bakalo.appforteacher.restwork.Student;
@@ -16,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Владислав on 21.02.2017.
+ * Class helper for work with queries to SQLite Data Base
  */
 
 public class DBWork {
@@ -24,17 +23,22 @@ public class DBWork {
     private StudentDBHelper sqLiteOpenHelper;
 
     public DBWork(Context context) {
-        sqLiteOpenHelper = new StudentDBHelper(context);
+        sqLiteOpenHelper = StudentDBHelper.getInstance(context);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
     }
 
     public void deleteAllStudentData() {
         sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_STUDENT);
         sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_COURSE);
-        sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE);
+        sqLiteDatabase.execSQL("delete from " + sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE);
     }
 
     public void writeStudentsToDB(List<Student> students) {
+        /**
+         * That list allows me not to search each
+         * time for existing courses, while i am adding
+         * students
+         */
         List<BufferCourse> existCourses = new ArrayList<>();
         for (Student student : students) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -50,13 +54,6 @@ public class DBWork {
                     student.getCourseList()) {
                 //Check for exist Course
                 long courseId = 0;
-//                Cursor cursor = sqLiteDatabase.query(StudentDBHelper.TBL_NAME_COURSE,
-//                        new String[]{StudentDBHelper._ID}, StudentDBHelper.CM_COURSE_NAME + " = ? ",
-//                        new String[]{course.getCourseName()}, null, null, null);
-//                if (cursor.moveToFirst()) {
-//                    courseId = cursor.getLong(0);
-//                }
-//                cursor.close();
                 if(!existCourses.contains(new BufferCourse(0, course.getCourseName())))
                 {
                     ContentValues contentValuesForCourse = new ContentValues();
@@ -66,6 +63,7 @@ public class DBWork {
                 }
                 else
                 {
+                    //If exist certain Course i just find id wich is needed in existCourses list
                     for (BufferCourse buffCourse :
                             existCourses) {
                         if (buffCourse.getName().equals(course.getCourseName()))
@@ -75,13 +73,11 @@ public class DBWork {
                         }
                     }
                 }
-                //CourseId for adding to StudentAndCourse table
-                //Add to CourseandStudent table
                 ContentValues contentValuesForCourseAndStudent = new ContentValues();
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_COURSE_ID, courseId);
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_STUDENT_ID, student.getId());
                 contentValuesForCourseAndStudent.put(StudentDBHelper.CM_MARK, course.getMark());
-                sqLiteDatabase.insert(sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE,
+                sqLiteDatabase.insert(sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE,
                         null, contentValuesForCourseAndStudent);
             }
 
@@ -99,7 +95,7 @@ public class DBWork {
     }
     public  Cursor getStudentsByFilter(Integer mark, Integer courseId)
     {
-        String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE
+        String table = sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE
                 + " as SC inner join "
                 + sqLiteOpenHelper.TBL_NAME_STUDENT
                 + " as ST on SC." + sqLiteOpenHelper.CM_STUDENT_ID + " = ST."
@@ -126,7 +122,7 @@ public class DBWork {
     }
     public Cursor getCursorOfCoursesByStudentId(String studentId)
     {
-        String table = sqLiteOpenHelper.TBL_NAME_STUDENTandCOURSE
+        String table = sqLiteOpenHelper.TBL_NAME_STUDENT_AND_COURSE
                 + " as SC inner join "
                 + sqLiteOpenHelper.TBL_NAME_COURSE
                 + " as CO on SC."
@@ -143,6 +139,9 @@ public class DBWork {
             sqLiteOpenHelper.close();
         }
     }
+    /**
+     * Class helper for adding Courses to DB
+     */
     private class BufferCourse{
         int id;
         String name;

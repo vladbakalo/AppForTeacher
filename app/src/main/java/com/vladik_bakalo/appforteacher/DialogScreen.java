@@ -12,18 +12,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.vladik_bakalo.appforteacher.dbwork.StudentDBHelper;
-import com.vladik_bakalo.appforteacher.dummy.StudentContent;
 import com.vladik_bakalo.appforteacher.restwork.Course;
 
 import java.util.List;
 
 /**
- * Created by Владислав on 21.02.2017.
+ * Class helper for creating dialog windows
  */
 
 public class DialogScreen {
 
     OnAlertDialogFilterInteractionListener dListner;
+    /*
+    Interface notify activity for pushed button(Clear or Filter) in filter dialog window
+     */
     public interface OnAlertDialogFilterInteractionListener
     {
         void onAlertDialogFilterClear();
@@ -41,7 +43,7 @@ public class DialogScreen {
 
         View viewFilter = activity.getLayoutInflater().inflate(R.layout.filters, null); // Получаем layout по его ID
         Spinner spinner = (Spinner) viewFilter.findViewById(R.id.spinnerCourses);
-        fillSpinerByCourses(spinner, courses, activity);
+        fillSpinnerByCourses(spinner, courses, activity);
         builder.setView(viewFilter);
         builder.setTitle(R.string.filters_str);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
@@ -64,12 +66,12 @@ public class DialogScreen {
 
 
     }
-    public static void fillSpinerByCourses(Spinner spinnerCourses, Cursor courses, Context context)
+    public static void fillSpinnerByCourses(Spinner spinnerCourses, Cursor courses, Context context)
     {
-        String[] colums = new String[]{StudentDBHelper.CM_COURSE_NAME};
+        String[] columns = new String[]{StudentDBHelper.CM_COURSE_NAME};
         int[] toViews = new int[]{android.R.id.text1};
         SimpleCursorAdapter simpleCursorAdapter =
-                new SimpleCursorAdapter(context, android.R.layout.simple_spinner_item, courses, colums, toViews, 0);
+                new SimpleCursorAdapter(context, android.R.layout.simple_spinner_item, courses, columns, toViews, 0);
         simpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCourses.setAdapter(simpleCursorAdapter);
     }
